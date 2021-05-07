@@ -29,7 +29,7 @@ public:
      */
     Node(int value)
     {
-        this -> value = value;
+        this->value = value;
         height = 1; // the node starts as a leaf
         leftChild = NULL;
         rightChild = NULL;
