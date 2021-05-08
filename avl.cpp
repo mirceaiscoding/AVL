@@ -30,7 +30,7 @@ public:
     Node(int value)
     {
         this->value = value;
-        height = 1; // the node starts as a leaf
+        height = 0;
         leftChild = NULL;
         rightChild = NULL;
     }
@@ -123,9 +123,9 @@ public:
      * 
      * @param leftChild 
      */
-    void setLeftChild(Node leftChild)
+    void setLeftChild(Node *leftChild)
     {
-        this->leftChild = new Node(leftChild);
+        this->leftChild = leftChild;
     }
 
     /**
@@ -133,18 +133,122 @@ public:
      * 
      * @param rightChild 
      */
-    void setRightChild(Node rightChild)
+    void setRightChild(Node *rightChild)
     {
-        this->rightChild = new Node(rightChild);
+        this->rightChild = rightChild;
+    }
+
+    /**
+     * @brief Get the Balance Value of the object (height of right subtree - height of left subtree).
+     * The node is balanced only if |balance value| <= 1
+     * 
+     * @return the balance value
+     */
+    int getBalanceValue(){
+        
+        int heightOfLeftSubtree = 0;
+        int heightOfRightSubtree = 0;
+
+        if (leftChild != NULL){
+            heightOfLeftSubtree = leftChild->getHeight();
+        }
+
+        if (rightChild != NULL){
+            heightOfRightSubtree = rightChild->getHeight();
+        }
+
+        return heightOfRightSubtree - heightOfLeftSubtree;
+
+    }
+};
+
+class AVL
+{
+
+private:
+    // The root of the AVL tree
+    Node *root;
+
+public:
+    AVL()
+    {
+        root = NULL;
+    }
+
+    /**
+     * @brief Get the root of the AVL tree
+     * 
+     * @return the root node
+     */
+    Node *getRoot()
+    {
+        return root;
+    }
+
+    /**
+     * @brief Set the root of the AVL tree
+     * 
+     * @param root new root of AVL tree
+     */
+    void setRoot(Node *root)
+    {
+        this->root = root;
+    }
+
+    /**
+     * @brief Function to insert a value into the AVL tree
+     * 
+     * @param value valute to insert
+     */
+    void insert(int value)
+    {
+
+        // Check if there is no root
+        if (root == NULL)
+        {
+            root = new Node(value);
+            return;
+        }
+
+        // Node used to find the correct place to insert
+        Node *nodeToCheck = root;
+
+        // Parent of the node to check
+        Node *parentOfNodeToCheck = NULL;
+
+        // The node that could be unbalanced after the insertion
+        // (if all parent nodes have a balance of 0 than after the insert |balance| can't be more than 1)
+        Node* possibleUnbalancedNode = NULL;
+
+        // Search AVL until we find an empty space
+        while (nodeToCheck != NULL)
+        {
+            if (nodeToCheck->getBalanceValue() != 0)
+            {
+                possibleUnbalancedNode = nodeToCheck;
+            }
+
+            // Update parent
+            parentOfNodeToCheck = nodeToCheck;
+
+            // Find the correct direction
+            if (nodeToCheck->getValue() < value)
+            {
+                nodeToCheck = nodeToCheck->getLeftChild();
+            }
+            else
+            {
+                nodeToCheck = nodeToCheck->getRightChild();
+            }
+        }
     }
 };
 
 int main()
 {
 
-    Node n1(10);
-    Node n2(12);
-    n1.setLeftChild(n2);
-
-    cout << n1.getHeight();
+    AVL avl;
+    avl.insert(1);
+    avl.insert(2);
+    
 }
