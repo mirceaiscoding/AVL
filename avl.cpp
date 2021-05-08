@@ -144,21 +144,23 @@ public:
      * 
      * @return the balance value
      */
-    int getBalanceValue(){
-        
+    int getBalanceValue()
+    {
+
         int heightOfLeftSubtree = 0;
         int heightOfRightSubtree = 0;
 
-        if (leftChild != NULL){
+        if (leftChild != NULL)
+        {
             heightOfLeftSubtree = leftChild->getHeight();
         }
 
-        if (rightChild != NULL){
+        if (rightChild != NULL)
+        {
             heightOfRightSubtree = rightChild->getHeight();
         }
 
         return heightOfRightSubtree - heightOfLeftSubtree;
-
     }
 };
 
@@ -218,7 +220,7 @@ public:
 
         // The node that could be unbalanced after the insertion
         // (if all parent nodes have a balance of 0 than after the insert |balance| can't be more than 1)
-        Node* possibleUnbalancedNode = NULL;
+        Node *possibleUnbalancedNode = NULL;
 
         // Search AVL until we find an empty space
         while (nodeToCheck != NULL)
@@ -232,7 +234,7 @@ public:
             parentOfNodeToCheck = nodeToCheck;
 
             // Find the correct direction
-            if (nodeToCheck->getValue() < value)
+            if (value < nodeToCheck->getValue())
             {
                 nodeToCheck = nodeToCheck->getLeftChild();
             }
@@ -241,6 +243,38 @@ public:
                 nodeToCheck = nodeToCheck->getRightChild();
             }
         }
+
+        Node* insertedNode = new Node(value);
+
+        // Link the parent node to the inserted node
+        if (value < parentOfNodeToCheck->getValue())
+        {
+            parentOfNodeToCheck->setRightChild(insertedNode);
+        }
+        else
+        {
+            parentOfNodeToCheck->setLeftChild(insertedNode);
+        }
+
+        // Repair the AVL tree and update node balances
+        repair(possibleUnbalancedNode, insertedNode);
+
+    }
+
+    /**
+     * @brief Repair avl so that all nodes are balanced and update node balances
+     * 
+     * @param possibleUnbalancedNode 
+     * @param insertedNode 
+     */
+    void repair(Node* possibleUnbalancedNode, Node* changedNode){
+
+        // If no nodes are unbalanced we only update node balances
+        if (possibleUnbalancedNode == NULL){
+
+            return;
+        }
+
     }
 };
 
@@ -250,5 +284,4 @@ int main()
     AVL avl;
     avl.insert(1);
     avl.insert(2);
-    
 }
