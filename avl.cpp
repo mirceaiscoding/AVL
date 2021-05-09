@@ -228,6 +228,8 @@ public:
      */
     Node *leftRotate(Node *root)
     {
+        cout << "DEBUG: leftRotation function called\n";
+
         // check for null
         if (root == NULL)
         {
@@ -265,6 +267,8 @@ public:
      */
     Node *rightRotate(Node *root)
     {
+        cout << "DEBUG: rightRotation function called\n";
+
         // check for null
         if (root == NULL)
         {
@@ -305,6 +309,8 @@ public:
      */
     Node *rightLeftRotation(Node *root)
     {
+        cout << "DEBUG: rightLeftRotation function called\n";
+
         Node *A = root;
         Node *C = A->getRightChild();
         Node *B = C->getLeftChild();
@@ -328,14 +334,79 @@ public:
      * @param root root of subtree
      * @return pointer to new root of subtree
      */
-    Node *rightLeftRotation(Node *root)
+    Node *leftRightRotation(Node *root)
     {
+        cout << "DEBUG: leftRightRotation function called\n";
         Node *C = root;
         Node *A = C->getLeftChild();
         Node *B = A->getRightChild();
 
         A = leftRotate(A);
         C = rightRotate(C);
+    }
+
+    /**
+     * @brief Find a value in the AVL tree
+     * 
+     * @param value the value we search
+     * @return pointer to the node (null if it is not found)
+     */
+    Node *find(int value)
+    {
+        return applyFind(root, value);
+    }
+
+    /**
+     * @brief Recursive function to find a value in the AVL tree
+     * 
+     * @param currentNode the root of the subtree into which we search
+     * @param value the value we search
+     * @return pointer to the node (null if it is not found)
+     */
+    Node *applyFind(Node *currentNode, int value)
+    {
+        if (currentNode == NULL)
+        {
+            return NULL;
+        }
+
+        if (value == currentNode->getValue())
+        {
+            return currentNode;
+        }
+
+        if (value < currentNode->getValue())
+        {
+            return applyFind(currentNode->getLeftChild(), value);
+        }
+        else
+        {
+            return applyFind(currentNode->getRightChild(), value);
+        }
+    }
+
+    /**
+     * @brief Print the values in the avl tree
+     * 
+     */
+    void print(){
+        applyPrint(root);
+    }
+
+    /**
+     * @brief Recursive function to print values from the subtree of root currentNode
+     * 
+     * @param currentNode the root of the subtree we are printing
+     */
+    void applyPrint(Node *currentNode)
+    {
+        if (currentNode != NULL)
+        {
+            cout << currentNode->getValue() << " ";
+            applyPrint(currentNode->getLeftChild());
+            applyPrint(currentNode->getRightChild());
+            cout << "\n";
+        }
     }
 
     /**
@@ -346,7 +417,7 @@ public:
     void insert(int value)
     {
         // Call the recursive funcion for root
-        applyInsert(root, value);
+        root = applyInsert(root, value);
     }
 
     /**
@@ -363,6 +434,7 @@ public:
         // end the recursion
         if (currentNode == NULL)
         {
+            cout << "DEBUG: insert node here\n";
             return (new Node(value));
         }
 
@@ -371,6 +443,7 @@ public:
         if (value < currentNode->getValue())
         {
             // insert into left subtree
+            cout << "DEBUG: insert into left subtree\n";
             currentNode->setLeftChild(applyInsert(currentNode->getLeftChild(), value));
 
             // check if the node is out of balance after the insert
@@ -402,12 +475,14 @@ public:
                      */
 
                     // Left-Right rotation
+                    currentNode = leftRightRotation(currentNode);
                 }
             }
         }
         else
         {
             // insert into right subtree
+            cout << "DEBUG: insert into right subtree\n";
             currentNode->setRightChild(applyInsert(currentNode->getRightChild(), value));
 
             // check if the node is out of balance after the insert
@@ -439,6 +514,7 @@ public:
                      */
 
                     // Right-Left rotation
+                    currentNode = rightLeftRotation(currentNode);
                 }
             }
         }
@@ -452,7 +528,34 @@ int main()
 {
 
     AVL avl;
+
     avl.insert(1);
+
+    if (avl.find(1))
+    {
+        cout << "1 apare in avl\n";
+    }
+
+    avl.print();
+
     avl.insert(5);
-    avl.insert(2);
+
+    avl.print();
+
+    // if (avl.find(5))
+    // {
+    //     cout << "5 apare in avl\n";
+    // }
+
+    // avl.insert(2);
+
+    // if (avl.find(2))
+    // {
+    //     cout << "2 apare in avl\n";
+    // }
+
+    // if (avl.find(3) == NULL)
+    // {
+    //     cout << "3 nu apare in avl\n";
+    // }
 }
