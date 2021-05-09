@@ -215,7 +215,7 @@ public:
     }
 
     /**
-     * @brief left rotate the subtree
+     * @brief Left rotate the subtree
      * 
      *  A
      *   \
@@ -252,7 +252,7 @@ public:
     }
 
     /**
-     * @brief right rotate the subtree
+     * @brief Right rotate the subtree
      * 
      *      C
      *     /
@@ -288,6 +288,55 @@ public:
         return B;
     }
 
+    /**
+     * @brief Right Left rotation
+     * 
+     * 1. Right rotation for C
+     * 2. Left rotaion for A
+     * 
+     *  A
+     *   \
+     *    C 
+     *   /         
+     *  B
+     * 
+     * @param root root of subtree
+     * @return pointer to new root of subtree
+     */
+    Node *rightLeftRotation(Node *root)
+    {
+        Node *A = root;
+        Node *C = A->getRightChild();
+        Node *B = C->getLeftChild();
+
+        C = rightRotate(C);
+        A = leftRotate(A);
+    }
+
+    /**
+     * @brief Left Right rotation
+     * 
+     * 1. Left rotation for A
+     * 2. Right rotation for C
+     * 
+     *    C
+     *   /
+     *  A 
+     *   \        
+     *    B
+     * 
+     * @param root root of subtree
+     * @return pointer to new root of subtree
+     */
+    Node *rightLeftRotation(Node *root)
+    {
+        Node *C = root;
+        Node *A = C->getLeftChild();
+        Node *B = A->getRightChild();
+
+        A = leftRotate(A);
+        C = rightRotate(C);
+    }
 
     /**
      * @brief Function to insert a value into the AVL tree
@@ -340,6 +389,7 @@ public:
                      */
 
                     // Right rotation
+                    currentNode = rightRotate(currentNode);
                 }
                 else
                 {
@@ -376,6 +426,7 @@ public:
                      */
 
                     // Left rotation
+                    currentNode = leftRotate(currentNode);
                 }
                 else
                 {
