@@ -208,7 +208,6 @@ public:
      */
     void insert(int value)
     {
-
     }
 
     /**
@@ -240,7 +239,30 @@ public:
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
-                // TODO: fix balance
+                if (value < currentNode->getLeftChild()->getValue())
+                {
+                    /**
+                     *      C
+                     *     /
+                     *    B
+                     *   /
+                     *  A
+                     */
+
+                    // Right rotation
+                }
+                else
+                {
+                    /**
+                     *      C
+                     *     /
+                     *    B
+                     *     \
+                     *      A
+                     */
+
+                    // Left-Right rotation
+                }
             }
         }
         else
@@ -253,15 +275,37 @@ public:
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
-                // TODO: fix balance
-            }            
+                if (value > currentNode->getLeftChild()->getValue())
+                {
+                    /**
+                         *  A
+                         *   \
+                         *    B
+                         *     \
+                         *      C
+                         */
+
+                    // Left rotation
+                }
+                else
+                {
+                    /**
+                         *  A
+                         *   \
+                         *    B
+                         *   /
+                         *  C
+                         */
+
+                    // Right-Left rotation
+                }
+            }
         }
 
-        // Update the height of the node (from bottom to top because of recursion)
+        // Update the height of the node
         int heightOfLeftSubtree = getHeight(currentNode->getLeftChild());
         int heightOfRightSubtree = getHeight(currentNode->getRightChild());
         currentNode->setHeight(max(heightOfLeftSubtree, heightOfRightSubtree) + 1);
-
     }
 };
 
