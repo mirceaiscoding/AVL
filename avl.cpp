@@ -187,6 +187,19 @@ public:
     }
 
     /**
+     * @brief Get the Updated Height of a node
+     * 
+     * @param node node we check heigh for
+     * @return updated height of the node
+     */
+    int getUpdatedHeight(Node node)
+    {
+        int heightOfLeftSubtree = getHeight(node.getLeftChild());
+        int heightOfRightSubtree = getHeight(node.getRightChild());
+        return max(heightOfLeftSubtree, heightOfRightSubtree) + 1;
+    }
+
+    /**
      * @brief Get the Balance Value of the object (height of left subtree - height of right subtree).
      * The node is balanced only if |balance value| <= 1
      * 
@@ -202,12 +215,89 @@ public:
     }
 
     /**
+     * @brief left rotate the subtree
+     * 
+     *  A
+     *   \
+     *    B         - >         B
+     *     \                   / \    
+     *      C                 A   C       
+     * 
+     * @param root root of subtree
+     * @return pointer to new root of subtree
+     */
+    Node *leftRotate(Node *root)
+    {
+        // check for null
+        if (root == NULL)
+        {
+            return NULL;
+        }
+
+        Node *A = root;
+        Node *B = A->getRightChild();
+        Node *C = B->getRightChild();
+
+        // left rotate
+        A->setRightChild(B->getLeftChild());
+        B->setLeftChild(A);
+
+        // update heights (lower levels first)
+        A->setHeight(getUpdatedHeight(*A));
+        C->setHeight(getUpdatedHeight(*C));
+        B->setHeight(getUpdatedHeight(*B));
+
+        // B is now the new root of the subtree
+        return B;
+    }
+
+    /**
+     * @brief right rotate the subtree
+     * 
+     *      C
+     *     /
+     *    B         - >       B
+     *   /                   / \    
+     *  A                   A   C       
+     * 
+     * @param root root of subtree
+     * @return pointer to new root of subtree
+     */
+    Node *rightRotate(Node *root)
+    {
+        // check for null
+        if (root == NULL)
+        {
+            return NULL;
+        }
+
+        Node *C = root;
+        Node *B = C->getLeftChild();
+        Node *A = B->getLeftChild();
+
+        // right rotate
+        C->setLeftChild(B->getRightChild());
+        B->setRightChild(C);
+
+        // update heights (lower levels first)
+        A->setHeight(getUpdatedHeight(*A));
+        C->setHeight(getUpdatedHeight(*C));
+        B->setHeight(getUpdatedHeight(*B));
+
+        // B is now the new root of the subtree
+        return B;
+    }
+
+
+    /**
      * @brief Function to insert a value into the AVL tree
      * 
      * @param value valute to insert
      */
     void insert(int value)
     {
+        // Call the recursive funcion for root
+        applyInsert(root, value);
     }
 
     /**
@@ -278,24 +368,24 @@ public:
                 if (value > currentNode->getLeftChild()->getValue())
                 {
                     /**
-                         *  A
-                         *   \
-                         *    B
-                         *     \
-                         *      C
-                         */
+                     *  A
+                     *   \
+                     *    B
+                     *     \
+                     *      C
+                     */
 
                     // Left rotation
                 }
                 else
                 {
                     /**
-                         *  A
-                         *   \
-                         *    B
-                         *   /
-                         *  C
-                         */
+                     *  A
+                     *   \
+                     *    B
+                     *   /
+                     *  C
+                     */
 
                     // Right-Left rotation
                 }
@@ -303,9 +393,7 @@ public:
         }
 
         // Update the height of the node
-        int heightOfLeftSubtree = getHeight(currentNode->getLeftChild());
-        int heightOfRightSubtree = getHeight(currentNode->getRightChild());
-        currentNode->setHeight(max(heightOfLeftSubtree, heightOfRightSubtree) + 1);
+        currentNode->setHeight(getUpdatedHeight(*currentNode));
     }
 };
 
@@ -313,4 +401,7 @@ int main()
 {
 
     AVL avl;
+    avl.insert(1);
+    avl.insert(5);
+    avl.insert(2);
 }
