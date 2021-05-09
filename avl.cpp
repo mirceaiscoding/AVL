@@ -211,6 +211,7 @@ public:
         int heightOfLeftSubtree = getHeight(node.getLeftChild());
         int heightOfRightSubtree = getHeight(node.getRightChild());
 
+        cout << "DEBUG: getBalanceValue returns " << heightOfLeftSubtree - heightOfRightSubtree << "\n";
         return heightOfLeftSubtree - heightOfRightSubtree;
     }
 
@@ -391,6 +392,7 @@ public:
      */
     void print(){
         applyPrint(root);
+        cout << "\n";
     }
 
     /**
@@ -403,9 +405,11 @@ public:
         if (currentNode != NULL)
         {
             cout << currentNode->getValue() << " ";
+
             applyPrint(currentNode->getLeftChild());
+
             applyPrint(currentNode->getRightChild());
-            cout << "\n";
+
         }
     }
 
@@ -447,10 +451,12 @@ public:
             currentNode->setLeftChild(applyInsert(currentNode->getLeftChild(), value));
 
             // check if the node is out of balance after the insert
+            cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
             int currentNodeBalanceValue = getBalanceValue(*currentNode);
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
+                cout << "DEBUG: Left imbalance\n";
                 if (value < currentNode->getLeftChild()->getValue())
                 {
                     /**
@@ -486,10 +492,13 @@ public:
             currentNode->setRightChild(applyInsert(currentNode->getRightChild(), value));
 
             // check if the node is out of balance after the insert
+            cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
             int currentNodeBalanceValue = getBalanceValue(*currentNode);
+
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
+                cout << "DEBUG: Right imbalance\n";
                 if (value > currentNode->getLeftChild()->getValue())
                 {
                     /**
@@ -521,6 +530,8 @@ public:
 
         // Update the height of the node
         currentNode->setHeight(getUpdatedHeight(*currentNode));
+
+        return currentNode;
     }
 };
 
@@ -542,12 +553,12 @@ int main()
 
     avl.print();
 
-    // if (avl.find(5))
-    // {
-    //     cout << "5 apare in avl\n";
-    // }
+    if (avl.find(5))
+    {
+        cout << "5 apare in avl\n";
+    }
 
-    // avl.insert(2);
+    avl.insert(2);
 
     // if (avl.find(2))
     // {
