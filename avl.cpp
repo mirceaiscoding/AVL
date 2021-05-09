@@ -30,7 +30,7 @@ public:
     Node(int value)
     {
         this->value = value;
-        height = 0;
+        height = 1;
         leftChild = NULL;
         rightChild = NULL;
     }
@@ -54,8 +54,7 @@ public:
      */
     ~Node()
     {
-
-        // TODO: add destructor
+        // Nothing
     }
 
     /**
@@ -137,31 +136,6 @@ public:
     {
         this->rightChild = rightChild;
     }
-
-    /**
-     * @brief Get the Balance Value of the object (height of right subtree - height of left subtree).
-     * The node is balanced only if |balance value| <= 1
-     * 
-     * @return the balance value
-     */
-    int getBalanceValue()
-    {
-
-        int heightOfLeftSubtree = 0;
-        int heightOfRightSubtree = 0;
-
-        if (leftChild != NULL)
-        {
-            heightOfLeftSubtree = leftChild->getHeight();
-        }
-
-        if (rightChild != NULL)
-        {
-            heightOfRightSubtree = rightChild->getHeight();
-        }
-
-        return heightOfRightSubtree - heightOfLeftSubtree;
-    }
 };
 
 class AVL
@@ -198,6 +172,36 @@ public:
     }
 
     /**
+     * @brief Get the Height of the node
+     * 
+     * @param node pointer to target node
+     * @return height of target node 
+     */
+    int getHeight(Node *node)
+    {
+        if (node == NULL)
+        {
+            return 0;
+        }
+        return node->getHeight();
+    }
+
+    /**
+     * @brief Get the Balance Value of the object (height of left subtree - height of right subtree).
+     * The node is balanced only if |balance value| <= 1
+     * 
+     * @return the balance value
+     */
+
+    int getBalanceValue(Node node)
+    {
+        int heightOfLeftSubtree = getHeight(node.getLeftChild());
+        int heightOfRightSubtree = getHeight(node.getRightChild());
+
+        return heightOfLeftSubtree - heightOfRightSubtree;
+    }
+
+    /**
      * @brief Function to insert a value into the AVL tree
      * 
      * @param value valute to insert
@@ -205,75 +209,58 @@ public:
     void insert(int value)
     {
 
-        // Check if there is no root
-        if (root == NULL)
-        {
-            root = new Node(value);
-            return;
-        }
-
-        // Node used to find the correct place to insert
-        Node *nodeToCheck = root;
-
-        // Parent of the node to check
-        Node *parentOfNodeToCheck = NULL;
-
-        // The node that could be unbalanced after the insertion
-        // (if all parent nodes have a balance of 0 than after the insert |balance| can't be more than 1)
-        Node *possibleUnbalancedNode = NULL;
-
-        // Search AVL until we find an empty space
-        while (nodeToCheck != NULL)
-        {
-            if (nodeToCheck->getBalanceValue() != 0)
-            {
-                possibleUnbalancedNode = nodeToCheck;
-            }
-
-            // Update parent
-            parentOfNodeToCheck = nodeToCheck;
-
-            // Find the correct direction
-            if (value < nodeToCheck->getValue())
-            {
-                nodeToCheck = nodeToCheck->getLeftChild();
-            }
-            else
-            {
-                nodeToCheck = nodeToCheck->getRightChild();
-            }
-        }
-
-        Node* insertedNode = new Node(value);
-
-        // Link the parent node to the inserted node
-        if (value < parentOfNodeToCheck->getValue())
-        {
-            parentOfNodeToCheck->setRightChild(insertedNode);
-        }
-        else
-        {
-            parentOfNodeToCheck->setLeftChild(insertedNode);
-        }
-
-        // Repair the AVL tree and update node balances
-        repair(possibleUnbalancedNode, insertedNode);
-
     }
 
     /**
-     * @brief Repair avl so that all nodes are balanced and update node balances
+     * @brief Recursive function to insert value into the subtree of root currentNode
      * 
-     * @param possibleUnbalancedNode 
-     * @param insertedNode 
+     * @param currentNode the root of the subtree into which we are inserting
+     * @param value the value we are inserting
+     * @return new root of subtree
      */
-    void repair(Node* possibleUnbalancedNode, Node* changedNode){
+    Node *applyInsert(Node *currentNode, int value)
+    {
 
-        // If no nodes are unbalanced we only update node balances
-        if (possibleUnbalancedNode == NULL){
-
-            return;
+        // if the current node is null we can insert here (the space is free)
+        // end the recursion
+        if (currentNode == NULL)
+        {
+            return (new Node(value));
         }
+
+        // Explanation of rotaions: https://cppsecrets.com/users/1039649505048495348575464115971151161149746979946105110/C00-AVL-Rotations.php
+
+        if (value < currentNode->getValue())
+        {
+            // insert into left subtree
+            currentNode->setLeftChild(applyInsert(currentNode->getLeftChild(), value));
+
+            // check if the node is out of balance after the insert
+            int currentNodeBalanceValue = getBalanceValue(*currentNode);
+
+            if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
+            {
+                // TODO: fix balance
+            }
+        }
+        else
+        {
+            // insert into right subtree
+            currentNode->setRightChild(applyInsert(currentNode->getRightChild(), value));
+
+            // check if the node is out of balance after the insert
+            int currentNodeBalanceValue = getBalanceValue(*currentNode);
+
+            if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
+            {
+                // TODO: fix balance
+            }            
+        }
+
+        // Update the height of the node (from bottom to top because of recursion)
+        int heightOfLeftSubtree = getHeight(currentNode->getLeftChild());
+        int heightOfRightSubtree = getHeight(currentNode->getRightChild());
+        currentNode->setHeight(max(heightOfLeftSubtree, heightOfRightSubtree) + 1);
 
     }
 };
@@ -282,6 +269,4 @@ int main()
 {
 
     AVL avl;
-    avl.insert(1);
-    avl.insert(2);
 }
