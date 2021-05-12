@@ -434,6 +434,10 @@ public:
             // Call the recursive funcion for root
             root = applyInsert(root, value);
         }
+        else
+        {
+            cout << "ERROR: Duplicate value inserted \n";
+        }
     }
 
     /**
@@ -663,16 +667,16 @@ int main()
     // test 6 - tests insert (any kind of rotation) with duplicate values - works
     if (true)
     {
-        cout << "--------------- test 5 ---------------\n";
+        cout << "--------------- test 6 ---------------\n";
         avl.insert(4);
         avl.insert(1);
         avl.insert(12);
         avl.insert(13);
         avl.insert(12); // duplicate
         avl.insert(3);
-        avl.insert(13); // duplicate  
+        avl.insert(13); // duplicate
         avl.insert(2);
-        avl.insert(4);   // duplicate
+        avl.insert(4); // duplicate
         avl.insert(5);
         avl.print();
     }
