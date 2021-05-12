@@ -239,15 +239,18 @@ public:
 
         Node *A = root;
         Node *B = A->getRightChild();
-        Node *C = B->getRightChild();
 
         // left rotate
         A->setRightChild(B->getLeftChild());
         B->setLeftChild(A);
 
         // update heights (lower levels first)
+        if (B->getRightChild())
+        {
+            Node *C = B->getRightChild();
+            C->setHeight(getUpdatedHeight(*C));
+        }
         A->setHeight(getUpdatedHeight(*A));
-        C->setHeight(getUpdatedHeight(*C));
         B->setHeight(getUpdatedHeight(*B));
 
         // B is now the new root of the subtree
@@ -278,14 +281,17 @@ public:
 
         Node *C = root;
         Node *B = C->getLeftChild();
-        Node *A = B->getLeftChild();
 
         // right rotate
         C->setLeftChild(B->getRightChild());
         B->setRightChild(C);
 
         // update heights (lower levels first)
-        A->setHeight(getUpdatedHeight(*A));
+        if (B->getLeftChild())
+        {
+            Node *A = B->getLeftChild();
+            A->setHeight(getUpdatedHeight(*A));
+        }
         C->setHeight(getUpdatedHeight(*C));
         B->setHeight(getUpdatedHeight(*B));
 
@@ -317,7 +323,8 @@ public:
         Node *B = C->getLeftChild();
 
         C = rightRotate(C);
-        A = leftRotate(A);
+        A->setRightChild(C);
+        return leftRotate(A);
     }
 
     /**
@@ -343,7 +350,8 @@ public:
         Node *B = A->getRightChild();
 
         A = leftRotate(A);
-        C = rightRotate(C);
+        C->setLeftChild(A);
+        return rightRotate(C);
     }
 
     /**
@@ -387,10 +395,11 @@ public:
     }
 
     /**
-     * @brief Print the values in the avl tree
+     * @brief Print the values in the avl tree in ascending order
      * 
      */
-    void print(){
+    void print()
+    {
         applyPrint(root);
         cout << "\n";
     }
@@ -404,12 +413,12 @@ public:
     {
         if (currentNode != NULL)
         {
-            cout << currentNode->getValue() << " ";
 
-            applyPrint(currentNode->getLeftChild());
+            applyPrint(currentNode->getLeftChild()); // print lesser numbers
 
-            applyPrint(currentNode->getRightChild());
+            cout << currentNode->getValue() << " "; // print this number
 
+            applyPrint(currentNode->getRightChild()); // print greater numbers
         }
     }
 
@@ -495,11 +504,10 @@ public:
             cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
             int currentNodeBalanceValue = getBalanceValue(*currentNode);
 
-
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
-                cout << "DEBUG: Right imbalance\n";
-                if (value > currentNode->getLeftChild()->getValue())
+                cout << "DEBUG: Right imbalance for node with value " << currentNode->getValue() << "\n";
+                if (value > currentNode->getRightChild()->getValue())
                 {
                     /**
                      *  A
@@ -540,33 +548,112 @@ int main()
 
     AVL avl;
 
-    avl.insert(1);
-
-    if (avl.find(1))
+    // test 1 - tests left rotation only - works
+    if (false)
     {
-        cout << "1 apare in avl\n";
+        cout << "--------------- test 1 ---------------\n";
+        avl.insert(1);
+        if (avl.find(1))
+        {
+            cout << "1 apare in avl\n";
+        }
+        else
+        {
+            cout << "ERROR 1!\n";
+        }
+        avl.print();
+        avl.insert(5);
+        avl.print();
+        if (avl.find(5))
+        {
+            cout << "5 apare in avl\n";
+        }
+        else
+        {
+            cout << "ERROR 5!\n";
+        }
+        avl.insert(7);
+        if (avl.find(7))
+        {
+            cout << "7 apare in avl\n";
+        }
+        else
+        {
+            cout << "ERROR 7!\n";
+        }
+        if (avl.find(3) == NULL)
+        {
+            cout << "3 nu apare in avl\n";
+        }
+        else
+        {
+            cout << "ERROR 3!\n";
+        }
+        avl.print();
     }
 
-    avl.print();
-
-    avl.insert(5);
-
-    avl.print();
-
-    if (avl.find(5))
+    // test 2 - tests right rotation only - works
+    if (false)
     {
-        cout << "5 apare in avl\n";
+        cout << "--------------- test 2 ---------------\n";
+        avl.insert(5);
+
+        avl.print();
+
+        avl.insert(3);
+
+        avl.print();
+
+        avl.insert(1);
+
+        avl.print();
     }
 
-    avl.insert(2);
+    // test 3 - tests right left rotation only - works
+    if (false)
+    {
+        cout << "--------------- test 3 ---------------\n";
+        avl.insert(1);
 
-    // if (avl.find(2))
-    // {
-    //     cout << "2 apare in avl\n";
-    // }
+        avl.print();
 
-    // if (avl.find(3) == NULL)
-    // {
-    //     cout << "3 nu apare in avl\n";
-    // }
+        avl.insert(5);
+
+        avl.print();
+
+        avl.insert(3);
+
+        avl.print();
+    }
+    
+    // test 4 - tests left right rotation only - works
+    if (false)
+    {
+        cout << "--------------- test 4 ---------------\n";
+        avl.insert(5);
+
+        avl.print();
+
+        avl.insert(1);
+
+        avl.print();
+
+        avl.insert(3);
+
+        avl.print();
+    }
+
+    // test 5 - tests insert (any kind of rotation) - works
+    if (true)
+    {
+        cout << "--------------- test 5 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(12);
+        avl.insert(13);
+        avl.insert(3);
+        avl.insert(2);
+        avl.insert(5);
+        avl.print();
+    }
 }
