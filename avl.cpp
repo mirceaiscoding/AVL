@@ -429,8 +429,11 @@ public:
      */
     void insert(int value)
     {
-        // Call the recursive funcion for root
-        root = applyInsert(root, value);
+        if (!find(value))
+        {
+            // Call the recursive funcion for root
+            root = applyInsert(root, value);
+        }
     }
 
     /**
@@ -625,7 +628,7 @@ int main()
 
         avl.print();
     }
-    
+
     // test 4 - tests left right rotation only - works
     if (false)
     {
@@ -644,7 +647,7 @@ int main()
     }
 
     // test 5 - tests insert (any kind of rotation) - works
-    if (true)
+    if (false)
     {
         cout << "--------------- test 5 ---------------\n";
         avl.insert(4);
@@ -653,6 +656,23 @@ int main()
         avl.insert(13);
         avl.insert(3);
         avl.insert(2);
+        avl.insert(5);
+        avl.print();
+    }
+
+    // test 6 - tests insert (any kind of rotation) with duplicate values - works
+    if (true)
+    {
+        cout << "--------------- test 5 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(12);
+        avl.insert(13);
+        avl.insert(12); // duplicate
+        avl.insert(3);
+        avl.insert(13); // duplicate  
+        avl.insert(2);
+        avl.insert(4);   // duplicate
         avl.insert(5);
         avl.print();
     }
