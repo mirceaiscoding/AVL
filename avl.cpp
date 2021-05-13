@@ -554,12 +554,12 @@ public:
     }
 
     /**
-     * @brief Get the succesor of a value
+     * @brief Get the successor of a value
      * 
-     * @param value value we search the succesor for
-     * @return the succesor of value
+     * @param value value we search the successor for
+     * @return the successor of value
      */
-    int succesor(int value)
+    int successor(int value)
     {
         try
         {
@@ -583,12 +583,53 @@ public:
         {
             if (error == 1)
             {
-                cout << "ERROR 1: The value is not in the AVL!/n";
+                cout << "ERROR 1: The value is not in the AVL!\n";
             }
             if (error == 2)
             {
-                cout << "ERROR 2: The value has no right subtree!/n";
+                cout << "ERROR 2: The value has no right subtree!\n";
             }
+            return -1;
+        }
+    }
+
+    /**
+     * @brief Get the predecessor of a value
+     * 
+     * @param value value we search the predecessor for
+     * @return the predecessor of value
+     */
+    int predecessor(int value)
+    {
+        try
+        {
+            Node *nodeToGetPredecessorFor = find(value);
+            if (nodeToGetPredecessorFor == NULL)
+            {
+                throw 1;
+            }
+            Node *currentNode = nodeToGetPredecessorFor->getLeftChild();
+            if (currentNode == NULL)
+            {
+                throw 2;
+            }
+            while(currentNode->getRightChild() != NULL)
+            {
+                currentNode = currentNode->getRightChild();
+            }
+            return currentNode->getValue();
+        }
+        catch (int error)
+        {
+            if (error == 1)
+            {
+                cout << "ERROR 1: The value is not in the AVL!\n";
+            }
+            if (error == 2)
+            {
+                cout << "ERROR 2: The value has no left subtree!\n";
+            }
+            return -1;
         }
     }
 };
@@ -724,10 +765,10 @@ int main()
         avl.print();
     }
 
-    // test 7 - tests succesor - works
-    if (true)
+    // test 7 - tests successor - works
+    if (false)
     {
-        cout << "--------------- test 6 ---------------\n";
+        cout << "--------------- test 7 ---------------\n";
         avl.insert(4);
         avl.insert(1);
         avl.insert(12);
@@ -739,11 +780,34 @@ int main()
         avl.insert(4); // duplicate
         avl.insert(5);
         avl.print();
-        cout << "The succesor of 3: " << avl.succesor(3) << "\n";
-        cout << "The succesor of 4: " << avl.succesor(4) << "\n";
-        cout << "The succesor of 5: " << avl.succesor(5) << "\n";
-        cout << "The succesor of 6: " << avl.succesor(6) << "\n";
-        cout << "The succesor of 12: " << avl.succesor(12) << "\n";
+        cout << "The successor of 3: " << avl.successor(3) << "\n";
+        cout << "The successor of 4: " << avl.successor(4) << "\n";
+        cout << "The successor of 5: " << avl.successor(5) << "\n";
+        cout << "The successor of 6: " << avl.successor(6) << "\n";
+        cout << "The successor of 12: " << avl.successor(12) << "\n";
+
+    }
+
+    // test 8 - tests predecessor - works
+    if (true)
+    {
+        cout << "--------------- test 8 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(12);
+        avl.insert(13);
+        avl.insert(12); // duplicate
+        avl.insert(3);
+        avl.insert(13); // duplicate
+        avl.insert(2);
+        avl.insert(4); // duplicate
+        avl.insert(5);
+        avl.print();
+        cout << "The predecessor of 3: " << avl.predecessor(3) << "\n";
+        cout << "The predecessor of 4: " << avl.predecessor(4) << "\n";
+        cout << "The predecessor of 5: " << avl.predecessor(5) << "\n";
+        cout << "The predecessor of 6: " << avl.predecessor(6) << "\n";
+        cout << "The predecessor of 12: " << avl.predecessor(12) << "\n";
 
     }
 }
