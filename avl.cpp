@@ -145,12 +145,6 @@ private:
     // The root of the AVL tree
     Node *root;
 
-public:
-    AVL()
-    {
-        root = NULL;
-    }
-
     /**
      * @brief Get the root of the AVL tree
      * 
@@ -355,17 +349,6 @@ public:
     }
 
     /**
-     * @brief Find a value in the AVL tree
-     * 
-     * @param value the value we search
-     * @return pointer to the node (null if it is not found)
-     */
-    Node *find(int value)
-    {
-        return applyFind(root, value);
-    }
-
-    /**
      * @brief Recursive function to find a value in the AVL tree
      * 
      * @param currentNode the root of the subtree into which we search
@@ -395,16 +378,6 @@ public:
     }
 
     /**
-     * @brief Print the values in the avl tree in ascending order
-     * 
-     */
-    void print()
-    {
-        applyPrint(root);
-        cout << "\n";
-    }
-
-    /**
      * @brief Recursive function to print values from the subtree of root currentNode
      * 
      * @param currentNode the root of the subtree we are printing
@@ -419,24 +392,6 @@ public:
             cout << currentNode->getValue() << " "; // print this number
 
             applyPrint(currentNode->getRightChild()); // print greater numbers
-        }
-    }
-
-    /**
-     * @brief Function to insert a value into the AVL tree
-     * 
-     * @param value valute to insert
-     */
-    void insert(int value)
-    {
-        if (!find(value))
-        {
-            // Call the recursive funcion for root
-            root = applyInsert(root, value);
-        }
-        else
-        {
-            cout << "ERROR: Duplicate value inserted \n";
         }
     }
 
@@ -548,6 +503,94 @@ public:
 
         return currentNode;
     }
+
+public:
+    /**
+     * @brief Construct a new AVL object
+     * 
+     */
+    AVL()
+    {
+        root = NULL;
+    }
+
+    /**
+     * @brief Find a value in the AVL tree
+     * 
+     * @param value the value we search
+     * @return pointer to the node (null if it is not found)
+     */
+    Node *find(int value)
+    {
+        return applyFind(root, value);
+    }
+
+    /**
+     * @brief Function to insert a value into the AVL tree
+     * 
+     * @param value valute to insert
+     */
+    void insert(int value)
+    {
+        if (!find(value))
+        {
+            // Call the recursive funcion for root
+            root = applyInsert(root, value);
+        }
+        else
+        {
+            cout << "ERROR: Duplicate value inserted \n";
+        }
+    }
+
+    /**
+     * @brief Print the values in the avl tree in ascending order
+     * 
+     */
+    void print()
+    {
+        applyPrint(root);
+        cout << "\n";
+    }
+
+    /**
+     * @brief Get the succesor of a value
+     * 
+     * @param value value we search the succesor for
+     * @return the succesor of value
+     */
+    int succesor(int value)
+    {
+        try
+        {
+            Node *nodeToGetSuccessorFor = find(value);
+            if (nodeToGetSuccessorFor == NULL)
+            {
+                throw 1;
+            }
+            Node *currentNode = nodeToGetSuccessorFor->getRightChild();
+            if (currentNode == NULL)
+            {
+                throw 2;
+            }
+            while(currentNode->getLeftChild() != NULL)
+            {
+                currentNode = currentNode->getLeftChild();
+            }
+            return currentNode->getValue();
+        }
+        catch (int error)
+        {
+            if (error == 1)
+            {
+                cout << "ERROR 1: The value is not in the AVL!/n";
+            }
+            if (error == 2)
+            {
+                cout << "ERROR 2: The value has no right subtree!/n";
+            }
+        }
+    }
 };
 
 int main()
@@ -555,7 +598,7 @@ int main()
 
     AVL avl;
 
-    // test 1 - tests left rotation only - works
+    // test 1 - tests left rotation and find - works
     if (false)
     {
         cout << "--------------- test 1 ---------------\n";
@@ -665,6 +708,23 @@ int main()
     }
 
     // test 6 - tests insert (any kind of rotation) with duplicate values - works
+    if (false)
+    {
+        cout << "--------------- test 6 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(12);
+        avl.insert(13);
+        avl.insert(12); // duplicate
+        avl.insert(3);
+        avl.insert(13); // duplicate
+        avl.insert(2);
+        avl.insert(4); // duplicate
+        avl.insert(5);
+        avl.print();
+    }
+
+    // test 7 - tests succesor - works
     if (true)
     {
         cout << "--------------- test 6 ---------------\n";
@@ -679,5 +739,11 @@ int main()
         avl.insert(4); // duplicate
         avl.insert(5);
         avl.print();
+        cout << "The succesor of 3: " << avl.succesor(3) << "\n";
+        cout << "The succesor of 4: " << avl.succesor(4) << "\n";
+        cout << "The succesor of 5: " << avl.succesor(5) << "\n";
+        cout << "The succesor of 6: " << avl.succesor(6) << "\n";
+        cout << "The succesor of 12: " << avl.succesor(12) << "\n";
+
     }
 }
