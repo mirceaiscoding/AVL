@@ -544,6 +544,24 @@ public:
     }
 
     /**
+     * @brief Function to delete a value from the AVL tree
+     * 
+     * @param value valute to delete
+     */
+    void deleteValue(int value)
+    {
+        if (find(value))
+        {
+            // Call the recursive funcion for root
+            
+        }
+        else
+        {
+            cout << "ERROR: Value to delete is not in the AVL\n";
+        }
+    }
+
+    /**
      * @brief Print the values in the avl tree in ascending order
      * 
      */
