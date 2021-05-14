@@ -136,6 +136,27 @@ public:
     {
         this->rightChild = rightChild;
     }
+
+    /**
+     * @brief Get the number of children of this node
+     * 
+     * @return number of children of this node
+     */
+    int getNumberOfChildren()
+    {
+        int nr = 0;
+        if (rightChild != NULL)
+        {
+            nr++;
+        }
+
+        if (leftChild != NULL)
+        {
+            nr++;
+        }
+
+        return nr;
+    }
 };
 
 class AVL
@@ -205,7 +226,7 @@ private:
         int heightOfLeftSubtree = getHeight(node.getLeftChild());
         int heightOfRightSubtree = getHeight(node.getRightChild());
 
-        cout << "DEBUG: getBalanceValue returns " << heightOfLeftSubtree - heightOfRightSubtree << "\n";
+        // cout << "DEBUG: getBalanceValue returns " << heightOfLeftSubtree - heightOfRightSubtree << "\n";
         return heightOfLeftSubtree - heightOfRightSubtree;
     }
 
@@ -223,7 +244,7 @@ private:
      */
     Node *leftRotate(Node *root)
     {
-        cout << "DEBUG: leftRotation function called\n";
+        // cout << "DEBUG: leftRotation function called\n";
 
         // check for null
         if (root == NULL)
@@ -265,7 +286,7 @@ private:
      */
     Node *rightRotate(Node *root)
     {
-        cout << "DEBUG: rightRotation function called\n";
+        // cout << "DEBUG: rightRotation function called\n";
 
         // check for null
         if (root == NULL)
@@ -310,7 +331,7 @@ private:
      */
     Node *rightLeftRotation(Node *root)
     {
-        cout << "DEBUG: rightLeftRotation function called\n";
+        // cout << "DEBUG: rightLeftRotation function called\n";
 
         Node *A = root;
         Node *C = A->getRightChild();
@@ -338,7 +359,7 @@ private:
      */
     Node *leftRightRotation(Node *root)
     {
-        cout << "DEBUG: leftRightRotation function called\n";
+        // cout << "DEBUG: leftRightRotation function called\n";
         Node *C = root;
         Node *A = C->getLeftChild();
         Node *B = A->getRightChild();
@@ -409,7 +430,7 @@ private:
         // end the recursion
         if (currentNode == NULL)
         {
-            cout << "DEBUG: insert node here\n";
+            // cout << "DEBUG: insert node here\n";
             return (new Node(value));
         }
 
@@ -418,16 +439,16 @@ private:
         if (value < currentNode->getValue())
         {
             // insert into left subtree
-            cout << "DEBUG: insert into left subtree\n";
+            // cout << "DEBUG: insert into left subtree\n";
             currentNode->setLeftChild(applyInsert(currentNode->getLeftChild(), value));
 
             // check if the node is out of balance after the insert
-            cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
+            // cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
             int currentNodeBalanceValue = getBalanceValue(*currentNode);
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
-                cout << "DEBUG: Left imbalance\n";
+                // cout << "DEBUG: Left imbalance\n";
                 if (value < currentNode->getLeftChild()->getValue())
                 {
                     /**
@@ -459,16 +480,16 @@ private:
         else
         {
             // insert into right subtree
-            cout << "DEBUG: insert into right subtree\n";
+            // cout << "DEBUG: insert into right subtree\n";
             currentNode->setRightChild(applyInsert(currentNode->getRightChild(), value));
 
             // check if the node is out of balance after the insert
-            cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
+            // cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
             int currentNodeBalanceValue = getBalanceValue(*currentNode);
 
             if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
             {
-                cout << "DEBUG: Right imbalance for node with value " << currentNode->getValue() << "\n";
+                // cout << "DEBUG: Right imbalance for node with value " << currentNode->getValue() << "\n";
                 if (value > currentNode->getRightChild()->getValue())
                 {
                     /**
@@ -504,6 +525,152 @@ private:
         return currentNode;
     }
 
+    Node *applyDelete(Node *currentNode, int value)
+    {
+
+        // if the current node is null return it
+        // end the recursion
+        if (currentNode == NULL)
+        {
+            return currentNode;
+        }
+
+        if (value < currentNode->getValue())
+        {
+            // delete into left subtree
+            // cout << "DEBUG: delete into left subtree\n";
+            currentNode->setLeftChild(applyDelete(currentNode->getLeftChild(), value));
+        }
+        else
+        {
+            if (value > currentNode->getValue())
+            {
+                // delete into right subtree
+                // cout << "DEBUG: delete into right subtree\n";
+                currentNode->setRightChild(applyDelete(currentNode->getRightChild(), value));
+            }
+            else
+            {
+                // this node is the one to delete
+                // cout << "DEBUG: Found the node to delete!\n";
+
+                int numberOfChildrenCurrentNode = currentNode->getNumberOfChildren();
+
+                if (numberOfChildrenCurrentNode == 0)
+                {
+                    // the node is a leaf so we can just delete it and stop the recursion
+                    return NULL;
+                }
+
+                if (numberOfChildrenCurrentNode == 1)
+                {
+                    // the node has one child
+                    Node *notNullChild;
+                    if (currentNode->getLeftChild())
+                    {
+                        notNullChild = currentNode->getLeftChild();
+                    }
+                    if (currentNode->getRightChild())
+                    {
+                        notNullChild = currentNode->getRightChild();
+                    }
+
+                    // replace the node with the not null child
+                    *currentNode = *notNullChild;
+                }
+
+                if (numberOfChildrenCurrentNode == 2)
+                {
+                    // the node has two children
+                    // replace the node with its successor
+                    int successorValue = successor(currentNode->getValue());
+                    currentNode->setValue(successorValue);
+                    Node *rightChildCurrentNode = currentNode->getRightChild();
+
+                    // delete the successor from the subtree
+                    // cout << "DEBUG: Delete successor" << successorValue << "\n";
+                    currentNode->setRightChild(applyDelete(currentNode->getRightChild(), successorValue));
+                }
+            }
+        }
+
+        // Update the height of the node
+        currentNode->setHeight(getUpdatedHeight(*currentNode));
+
+        // Check if the node is out of balance
+        // cout << "DEBUG: Checking node with value " << currentNode->getValue() << "\n";
+        int currentNodeBalanceValue = getBalanceValue(*currentNode);
+        if (max(currentNodeBalanceValue, -currentNodeBalanceValue) > 1)
+        {
+            // imbalance
+            if (currentNodeBalanceValue > 1)
+            {
+                // left imbalance
+                int leftNodeBalanceValue = getBalanceValue(*(currentNode->getLeftChild()));
+                if (leftNodeBalanceValue >= 0)
+                {
+                    /**
+                     *      C
+                     *     /
+                     *    B
+                     *   /
+                     *  A
+                     */
+
+                    // Right rotation
+                    currentNode = rightRotate(currentNode);
+                }
+                else
+                {
+                    /**
+                     *      C
+                     *     /
+                     *    B
+                     *     \
+                     *      A
+                     */
+
+                    // Left-Right rotation
+                    currentNode = leftRightRotation(currentNode);
+                }
+            }
+            else
+            {
+                // right imbalance
+
+                int rightNodeBalanceValue = getBalanceValue(*(currentNode->getRightChild()));
+                if (rightNodeBalanceValue <= 0)
+                {
+                    /**
+                     *  A
+                     *   \
+                     *    B
+                     *     \
+                     *      C
+                     */
+
+                    // Left rotation
+                    currentNode = leftRotate(currentNode);
+                }
+                else
+                {
+                    /**
+                     *  A
+                     *   \
+                     *    B
+                     *   /
+                     *  C
+                     */
+
+                    // Right-Left rotation
+                    currentNode = rightLeftRotation(currentNode);
+                }
+            }
+        }
+
+        return currentNode;
+    }
+
 public:
     /**
      * @brief Construct a new AVL object
@@ -532,6 +699,7 @@ public:
      */
     void insert(int value)
     {
+        cout << "ACTION: inserting " << value << "\n";
         if (!find(value))
         {
             // Call the recursive funcion for root
@@ -550,10 +718,11 @@ public:
      */
     void deleteValue(int value)
     {
+        cout << "ACTION: deleting " << value << "\n";
         if (find(value))
         {
             // Call the recursive funcion for root
-            
+            root = applyDelete(root, value);
         }
         else
         {
@@ -591,7 +760,7 @@ public:
             {
                 throw 2;
             }
-            while(currentNode->getLeftChild() != NULL)
+            while (currentNode->getLeftChild() != NULL)
             {
                 currentNode = currentNode->getLeftChild();
             }
@@ -631,7 +800,7 @@ public:
             {
                 throw 2;
             }
-            while(currentNode->getRightChild() != NULL)
+            while (currentNode->getRightChild() != NULL)
             {
                 currentNode = currentNode->getRightChild();
             }
@@ -803,11 +972,10 @@ int main()
         cout << "The successor of 5: " << avl.successor(5) << "\n";
         cout << "The successor of 6: " << avl.successor(6) << "\n";
         cout << "The successor of 12: " << avl.successor(12) << "\n";
-
     }
 
     // test 8 - tests predecessor - works
-    if (true)
+    if (false)
     {
         cout << "--------------- test 8 ---------------\n";
         avl.insert(4);
@@ -826,6 +994,45 @@ int main()
         cout << "The predecessor of 5: " << avl.predecessor(5) << "\n";
         cout << "The predecessor of 6: " << avl.predecessor(6) << "\n";
         cout << "The predecessor of 12: " << avl.predecessor(12) << "\n";
+    }
 
+    // test 9 - tests simple delete - works
+    if (false)
+    {
+        cout << "--------------- test 9 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(2);
+        avl.deleteValue(2);
+        avl.print();
+    }
+
+    // test 10 - tests delete - works
+    if (true)
+    {
+        cout << "--------------- test 10 ---------------\n";
+        avl.insert(4);
+        avl.insert(1);
+        avl.insert(12);
+        avl.insert(13);
+        avl.print();
+
+        avl.deleteValue(12); // delete
+        avl.print();
+
+        avl.insert(3);
+        avl.print();
+
+        avl.deleteValue(13); // delete
+        avl.print();
+
+        avl.insert(2);
+        avl.print();
+
+        avl.deleteValue(4); // delete
+        avl.print();
+
+        avl.insert(5);
+        avl.print();
     }
 }
