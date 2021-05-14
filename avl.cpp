@@ -525,6 +525,13 @@ private:
         return currentNode;
     }
 
+    /**
+     * @brief Recursive function to delete value from the subtree of root currentNode
+     * 
+     * @param currentNode the root of the subtree from which we are deleting
+     * @param value the value we are deleting
+     * @return new root of subtree
+     */
     Node *applyDelete(Node *currentNode, int value)
     {
 
